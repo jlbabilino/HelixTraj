@@ -1,12 +1,13 @@
 import json
 from math import *
 import json
+import numpy as np
 
-def export_trajectory(x, y, theta, vx, vy, omega, dts, N_per_segment, name):
+def export_trajectory(x, y, theta, vx, vy, omega, dts, N_per_segment):
     ts = [0]
     for dt in dts:
         for k in range(N_per_segment):
-            ts.append(dt + ts[-1])
+            ts.append(ts[-1] + dt)
     xs, ys, thetas = [], [], []
     new_dt = 0.02
     time = 0
@@ -39,9 +40,12 @@ def export_trajectory(x, y, theta, vx, vy, omega, dts, N_per_segment, name):
     # f.close()
 
     f = open("out.json", "w")
-    with f as write: 
-        json.dump(x, write)
-
+    trajectory = []
+    for j in range(len(x)):
+        # trajectory.append([str(round(ts[j],4)), str(round(x[j],4)), str(round(y[j],4)), str(round(theta[j],4)), str(round(vx[j],4)), str(round(vy[j],4)), str(round(omega[j],4))])
+        trajectory.append({"ts": str(round(ts[j],4)), "x": str(round(x[j],4)), "y": str(round(y[j],4)), "theta": str(round(theta[j],4)), "vx": str(round(vx[j],4)), "vy": str(round(vy[j],4)), "omega": str(round(omega[j],4))})
+    with f as write:
+        json.dump(trajectory, write, indent=4)
     return xs, ys, theta
 
 def import_path(file):

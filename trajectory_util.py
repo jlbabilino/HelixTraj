@@ -7,6 +7,9 @@ import os
 import matplotlib.animation as animation
 
 def short(theta0, theta1):
+    """
+        Finds shortest angle between two angles
+    """
     diff = (theta1 - theta0 + math.pi) % (2*math.pi) - math.pi
     if diff < -math.pi:
         return diff + 2*math.pi
@@ -14,6 +17,9 @@ def short(theta0, theta1):
         return diff
 
 def solve_corners(pose, drive):
+    """
+        Finds the corners of the robot's bumpers
+    """
     x, y, theta = pose
     width = drive.width
     length = drive.length
@@ -26,10 +32,16 @@ def solve_corners(pose, drive):
     return [[p0, p1], [p0, p2], [p1, p3], [p2, p3]]
 
 def draw_robot(ax, pose, drive):
+    """
+        Draws the robot to the screen
+    """
     lines = mpl.collections.LineCollection(solve_corners(pose,drive),color="black",lw=1)
     ax.add_collection(lines)
 
 def draw_field():
+    """
+        Displays a windows
+    """
     plt.style.use("classic")
     fig, ax = plt.subplots()
     ax.add_patch(mpl.patches.Rectangle(
@@ -97,22 +109,4 @@ def animate_trajectory(
         fps=(int)(1 / dt),
     )
     return anim
-
-def generate_initial_trajectory(waypoints, num_states):
-    x, y, theta = [], [], []
-
-    lengths = [0]
-    for k in range(len(waypoints)-1):
-        lengths.append(lengths[k] + math.hypot(waypoints[k+1][0]-waypoints[k][0],waypoints[k+1][1]-waypoints[k][1]))
-    ds = lengths[-1] / (num_states - 1)
-
-    index = 0
-    for k in range(num_states):
-        s = ds * k
-        while (lengths[index + 1] + 0.000001 < s):
-            index += 1
-        t = (s - lengths[index]) / (lengths[index + 1] - lengths[index])
-        x.append((waypoints[index + 1][0] - waypoints[index][0]) * t + waypoints[index][0])
-        y.append((waypoints[index + 1][1] - waypoints[index][1]) * t + waypoints[index][1])
-        theta.append((waypoints[index + 1][2] - waypoints[index][2]) * t + waypoints[index][2])
-    return x, y, theta
+# print(generate_initial_trajectory([[0.,0.,0.],[3.,3.,0.],[9.,0.,0.]], 3))

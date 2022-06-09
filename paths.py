@@ -83,14 +83,14 @@ def main():
                     [2.5,0.85,-1.95],
                     [6,-0.3,-2.1],
                     [6.3,0,-2.3],
-                    [6,-0.3,-2.3]],
-                    "FourBallPartTwo")
+                    [6,-0.3,-2.3]])
+                    # "FourBallPartTwo")
 
-    generator.generate([
-                    [6,-0.3,-2.3],
-                    [2.5,0.85,-2.1],
-                    [-0.3,0,-1.95]],
-                    "FourBallPartThree")
+    # generator.generate([
+    #                 [6,-0.3,-2.3],
+    #                 [2.5,0.85,-2.1],
+    #                 [-0.3,0,-1.95]],
+    #                 "FourBallPartThree")
 
     # generator.generate([
     #                 [6.15,0.15,-2.3],
