@@ -1,6 +1,0 @@
-setup.py
-HelixTrajectory.egg-info/PKG-INFO
-HelixTrajectory.egg-info/SOURCES.txt
-HelixTrajectory.egg-info/dependency_links.txt
-HelixTrajectory.egg-info/requires.txt
-HelixTrajectory.egg-info/top_level.txt
