@@ -72,7 +72,7 @@ class swerve_drive:
             variable.
 
             Arguments:
-                theta -- the variable representing the heading of the robot
+                theta -- the variable representing the heading of the robot at one sample point.
             Returns:
                 Returns a list containing the the four positions in the order specified in the class.
         """
@@ -86,7 +86,7 @@ class swerve_drive:
             module_positions.append([diagonal*cos(module_angle+theta), diagonal*sin(module_angle+theta)])
         return module_positions
 
-    def add_kinematics_constraint(self, solver, theta: MX, vx: MX, vy: MX, omega: MX, ax: MX, ay: MX, alpha: MX, N_total: int):
+    def add_kinematics_constraint(self, solver: OptiSol, theta: MX, vx: MX, vy: MX, omega: MX, ax: MX, ay: MX, alpha: MX, N_total: int):
         """
             Arguments:
                 solver -- the solver to add constraints to

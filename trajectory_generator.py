@@ -1,14 +1,17 @@
+from typing import List, Dict
+
 from casadi import *
-import pylab as plt
+# import pylab as plt
 
 from trajectory_io import *
+from drive.swerve_drive import swerve_drive
 import trajectory_util
 
 class trajectory_generator:
-    def __init__(self, drive):
+    def __init__(self, drive: swerve_drive):
         self.drive = drive
-   
-    def generate(self, waypoints: list):
+
+    def generate(self, waypoints: List[Dict]):
         # Segments refer to the short parts of a trajectories between
         # succesive sample points while trajectory segments are segments
         # of the path where the robot is guaranteed to go through both endpoints
@@ -92,18 +95,35 @@ class trajectory_generator:
             solution_dts.append(solution.value(Ts[k] / self.N_per_trajectory_segment)) # TODO: Try changing this to sol.value(dts[k])
         # print(sum(sol_dts) * self.N_per_trajectory_segment)
 
-        xs, ys, thetas = export_trajectory(solution.value(self.x), 
-                                           solution.value(self.y), 
-                                           solution.value(self.theta), 
-                                           solution.value(self.vx), 
-                                           solution.value(self.vy), 
-                                           solution.value(self.omega), 
-                                          solution_dts, self.N_per_trajectory_segment)
+        solution_x = solution.value(self.x)
+        solution_y = solution.value(self.y)
+        solution_theta = solution.value(self.theta)
+        solution_vx = solution.value(self.vx)
+        solution_vy = solution.value(self.vy)
+        solution_omega = solution.value(self.omega)
+
+        ts = [0]
+        for solution_dt in solution_dts:
+            for k in range(self.N_per_trajectory_segment):
+                ts.append(ts[-1] + solution_dt)
+        trajectory = []
+        for j in range(len(solution_x)):
+            # trajectory.append([str(round(ts[j],4)), str(round(x[j],4)), str(round(y[j],4)), str(round(theta[j],4)), str(round(vx[j],4)), str(round(vy[j],4)), str(round(omega[j],4))])
+            trajectory.append({'ts': round(ts[j],4), 'x': round(solution_x[j],4), 'y': round(solution_y[j],4), 'heading': round(solution_theta[j],4), 'vx': round(solution_vx[j],4), 'vy': round(solution_vy[j],4), 'omega': round(solution_omega[j],4)})
+
+        # xs, ys, thetas = export_trajectory(solution.value(self.x), 
+        #                                    solution.value(self.y), 
+        #                                    solution.value(self.theta), 
+        #                                    solution.value(self.vx), 
+        #                                    solution.value(self.vy), 
+        #                                    solution.value(self.omega), 
+        #                                   solution_dts, self.N_per_trajectory_segment)
 
         # trajectory_util.draw_trajectory(xs,ys,thetas,waypoints,self.drive,name)
         # trajectory_util.animate_trajectory(xs,ys,thetas,waypoints,self.drive,0.02,"trajectory")
 
-        plt.show()
+        # plt.show()
+        return trajectory
 
     def add_boundry_constraint(self):
         """
@@ -116,7 +136,7 @@ class trajectory_generator:
             self.opti.subject_to(self.vy[k] == 0)
             self.opti.subject_to(self.omega[k] == 0)
 
-    def add_waypoint_constraint(self, waypoints):
+    def add_waypoint_constraint(self, waypoints: List[Dict]):
         """
             Adds constraints that ensure the robot goes through each waypoint.
 
@@ -125,17 +145,17 @@ class trajectory_generator:
         """
         for k in range(self.trajectory_segment_count + 1):
             index = k * self.N_per_trajectory_segment
-            self.opti.subject_to(self.x[index] == waypoints[k][0])
-            self.opti.subject_to(self.y[index] == waypoints[k][1])
-            self.opti.subject_to(self.theta[index] == waypoints[k][2])
+            self.opti.subject_to(self.x[index] == waypoints[k]['x'])
+            self.opti.subject_to(self.y[index] == waypoints[k]['y'])
+            self.opti.subject_to(self.theta[index] == waypoints[k]['heading'])
 
-def generate_initial_trajectory(waypoints, N_per_trajectory_segment):
+def generate_initial_trajectory(waypoints: List[Dict], N_per_trajectory_segment: int):
     x, y, theta = [], [], []
     for k in range(len(waypoints) - 1):
-        x.extend(np.linspace(waypoints[k][0], waypoints[k+1][0], N_per_trajectory_segment, False).tolist())
-        y.extend(np.linspace(waypoints[k][1], waypoints[k+1][1], N_per_trajectory_segment, False).tolist())
-        theta.extend(np.linspace(waypoints[k][2], waypoints[k+1][2], N_per_trajectory_segment, False).tolist())
-    x.append(waypoints[-1][0]) # last point
-    y.append(waypoints[-1][1])
-    theta.append(waypoints[-1][2])
+        x.extend(np.linspace(waypoints[k]['x'], waypoints[k+1]['x'], N_per_trajectory_segment, False).tolist())
+        y.extend(np.linspace(waypoints[k]['y'], waypoints[k+1]['y'], N_per_trajectory_segment, False).tolist())
+        theta.extend(np.linspace(waypoints[k]['heading'], waypoints[k+1]['heading'], N_per_trajectory_segment, False).tolist())
+    x.append(waypoints[-1]['x']) # last point
+    y.append(waypoints[-1]['y'])
+    theta.append(waypoints[-1]['heading'])
     return x, y, theta

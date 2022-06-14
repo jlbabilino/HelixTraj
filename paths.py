@@ -20,6 +20,36 @@ def main():
 
     generator = trajectory_generator(drive)
 
+    generator.generate([
+                    [4,3,0],
+                    [8,5,1.57],
+                    [10,3,3.14],
+                    [8,1,3.14],
+                    [4,3,3.14]])
+
+    generator.generate(
+        [{
+            'x': 4,
+            'y': 3,
+            'heading': 0
+        }, {
+            'x': 8,
+            'y': 5,
+            'heading': 1.57
+        }, {
+            'x': 10,
+            'y': 3,
+            'heading': 3.14
+        }, {
+            'x': 8,
+            'y': 1,
+            'heading': 3.14
+        }, {
+            'x': 4,
+            'y': 3,
+            'heading': 3.14
+        }])
+
     # generator.generate(
     #                 [[0,0,-1.57],
     #                 [0,1.0,-1.57],
@@ -78,12 +108,12 @@ def main():
     #                 [6.35,0.0,-2.1]],
     #                 "FourBallPartTwo")
 
-    generator.generate([
-                    [0,0,-1.95],
-                    [2.5,0.85,-1.95],
-                    [6,-0.3,-2.1],
-                    [6.3,0,-2.3],
-                    [6,-0.3,-2.3]])
+    # generator.generate([
+    #                 [0,0,-1.95],
+    #                 [2.5,0.85,-1.95],
+    #                 [6,-0.3,-2.1],
+    #                 [6.3,0,-2.3],
+    #                 [6,-0.3,-2.3]])
                     # "FourBallPartTwo")
 
     # generator.generate([
