@@ -1,11 +1,8 @@
 from typing import List, Dict
 
 from casadi import *
-# import pylab as plt
 
-from trajectory_io import *
 from drive.swerve_drive import swerve_drive
-import trajectory_util
 
 class trajectory_generator:
     def __init__(self, drive: swerve_drive):
@@ -92,8 +89,7 @@ class trajectory_generator:
 
         solution_dts = []
         for k in range(self.trajectory_segment_count):
-            solution_dts.append(solution.value(Ts[k] / self.N_per_trajectory_segment)) # TODO: Try changing this to sol.value(dts[k])
-        # print(sum(sol_dts) * self.N_per_trajectory_segment)
+            solution_dts.append(solution.value(Ts[k] / self.N_per_trajectory_segment)) # TODO: Try changing this to solution.value(dts[k])
 
         solution_x = solution.value(self.x)
         solution_y = solution.value(self.y)
@@ -111,18 +107,6 @@ class trajectory_generator:
             # trajectory.append([str(round(ts[j],4)), str(round(x[j],4)), str(round(y[j],4)), str(round(theta[j],4)), str(round(vx[j],4)), str(round(vy[j],4)), str(round(omega[j],4))])
             trajectory.append({'ts': round(ts[j],4), 'x': round(solution_x[j],4), 'y': round(solution_y[j],4), 'heading': round(solution_theta[j],4), 'vx': round(solution_vx[j],4), 'vy': round(solution_vy[j],4), 'omega': round(solution_omega[j],4)})
 
-        # xs, ys, thetas = export_trajectory(solution.value(self.x), 
-        #                                    solution.value(self.y), 
-        #                                    solution.value(self.theta), 
-        #                                    solution.value(self.vx), 
-        #                                    solution.value(self.vy), 
-        #                                    solution.value(self.omega), 
-        #                                   solution_dts, self.N_per_trajectory_segment)
-
-        # trajectory_util.draw_trajectory(xs,ys,thetas,waypoints,self.drive,name)
-        # trajectory_util.animate_trajectory(xs,ys,thetas,waypoints,self.drive,0.02,"trajectory")
-
-        # plt.show()
         return trajectory
 
     def add_boundry_constraint(self):
