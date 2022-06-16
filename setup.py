@@ -1,11 +1,20 @@
 from setuptools import setup, find_packages
 
+try:
+    from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+    class bdist_wheel(_bdist_wheel):
+        def finalize_options(self):
+            _bdist_wheel.finalize_options(self)
+            self.root_is_pure = False
+except ImportError:
+    bdist_wheel = None
+
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setup(
-    name='HelixTrajectory',
-    version='0.0.0',
+    name='helixtrajectory',
+    version='0.1.1',
     author='Joshua Nichols',
     license='MIT',
     description='Triple Helix Trajectory Generation Utility',
@@ -26,5 +35,6 @@ setup(
         'console_scripts': [
             'helixtrajectory = cli:cli'
         ]
-    }
+    },
+    cmdclass={'bdist_wheel': bdist_wheel}
 )
